@@ -35,3 +35,31 @@ sudo systemctl enable jenkins
 sudo systemctl start jenkins
 EOF
 }
+
+resource "aws_security_group" "ec2_jenkins" {
+  name        = "ec2_jenkins"
+  description = "Allow SSH and HTTP traffic"
+  vpc_id      = "vpc-03b53edf3579ce9c1"
+}
+ingress {
+  from_port = 22
+  to_port   = 22
+  protocol  = "tcp"
+}
+
+ingress {
+  from_port = 443
+  to_port   = 443
+  protocol  = "tcp"
+}
+ingress {
+  from_port = 8080
+  to_port   = 8080
+  protocol  = "tcp"
+}
+
+egress {
+  from_port = 0
+  to_port   = 0
+  protocol  = "all"
+}
