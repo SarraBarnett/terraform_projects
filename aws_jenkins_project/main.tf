@@ -63,3 +63,17 @@ egress {
   to_port   = 0
   protocol  = "all"
 }
+
+resource "aws_s3_bucket" "jenkinsartifacts23" {
+  bucket = "jenkinsartifacts23"
+
+  tags = {
+    Name        = "Jenkins Artifacts Bucket"
+    Environment = "Dev"
+  }
+}
+
+resource "aws_s3_bucket_acl" "privateJenkins_Artifactsbucket" {
+  bucket = jenkinsartifacts23
+  acl    = "private"
+}
