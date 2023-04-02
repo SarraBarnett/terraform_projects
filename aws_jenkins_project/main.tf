@@ -61,7 +61,7 @@ ingress {
 egress {
   from_port = 0
   to_port   = 0
-  protocol  = "all"
+  protocol  = "-1"
 }
 
 resource "aws_s3_bucket" "jenkinsartifacts23" {
