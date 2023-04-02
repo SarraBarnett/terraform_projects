@@ -16,8 +16,9 @@ provider "aws" {
 # Create a resource block for ec2 instance
 resource "aws_instance" "jenkins_server" {
 
-  ami                    = "ami-00c39f71452c08778"
+  ami                    = "ami-04581fbf744a7d11f"
   instance_type          = "t2.micro"
+  vpc_security_group_ids = [aws_security_group.ec2_jenkins.id]
 
 
   tags = {
@@ -29,7 +30,7 @@ resource "aws_instance" "jenkins_server" {
 sudo yum update –y
 sudo wget -O /etc/yum.repos.d/jenkins.repo \
 https://pkg.jenkins.io/redhat-stable/jenkins.repo 
-sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
 sudo yum upgrade
 sudo amazon-linux-extras install java-openjdk11 -y
 sudo yum install jenkins -y
