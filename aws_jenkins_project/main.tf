@@ -15,8 +15,10 @@ provider "aws" {
 
 # Create a resource block for ec2 instance
 resource "aws_instance" "jenkins_server" {
-  ami           = "ami-00c39f71452c08778"
-  instance_type = "t2.micro"
+
+  ami                    = "ami-00c39f71452c08778"
+  instance_type          = "t2.micro"
+
 
   tags = {
     Name = "jenkins_ec2_instance"
