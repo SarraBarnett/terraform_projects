@@ -1,79 +1,54 @@
-# Configure aws provider version
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.61.0"
-    }
-  }
-}
-
-# Configure the aws provider and region
-provider "aws" {
-  region = "us-east-1"
-}
-
 # Create a resource block for ec2 instance
 resource "aws_instance" "jenkins_server" {
-
-  ami                    = "ami-04581fbf744a7d11f"
-  instance_type          = "t2.micro"
+  ami                    = "var.ami_id"
+  instance_type          = "var.instance_type"
   vpc_security_group_ids = [aws_security_group.ec2_jenkins.id]
 
 
   tags = {
-    Name = "jenkins_ec2_instance"
+    Name = "var.instance_name"
   }
 
-  user_data = <<-EOF
-#!/bin/bash
-sudo yum update –y
-sudo wget -O /etc/yum.repos.d/jenkins.repo \
-https://pkg.jenkins.io/redhat-stable/jenkins.repo 
-sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
-sudo yum upgrade
-sudo amazon-linux-extras install java-openjdk11 -y
-sudo yum install jenkins -y
-sudo systemctl enable jenkins
-sudo systemctl start jenkins
-EOF
+  # User data in ec2 with script to install and run jenkins server
+  user_data = file("script.sh")
+
 }
 
 resource "aws_security_group" "ec2_jenkins" {
   name        = "ec2_jenkins"
   description = "Allow SSH and HTTP traffic"
-  vpc_id      = "vpc-03b53edf3579ce9c1"
+  vpc_id      = var.vpc_id
 
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.cidr_blocks
   }
 
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.cidr_blocks
   }
   ingress {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.cidr_blocks
   }
 
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.cidr_blocks
   }
 }
 
 resource "aws_s3_bucket" "jenkinsartifacts23" {
-  bucket = "jenkinsartifacts23"
+  bucket = var.bucket_name
 
   tags = {
     Name        = "Jenkins Artifacts Bucket"
@@ -82,6 +57,6 @@ resource "aws_s3_bucket" "jenkinsartifacts23" {
 }
 
 resource "aws_s3_bucket_acl" "privateJenkins_Artifactsbucket" {
-  bucket = "jenkinsartifacts23"
+  bucket = var.bucket_name
   acl    = "private"
 }
