@@ -19,7 +19,7 @@ resource "aws_instance" "jenkins_server" {
   instance_type = "t2.micro"
 
   tags = {
-    Name = terraformProject
+    Name = "jenkins_ec2_instance"
   }
 
   user_data = <<-EOF
@@ -40,28 +40,33 @@ resource "aws_security_group" "ec2_jenkins" {
   name        = "ec2_jenkins"
   description = "Allow SSH and HTTP traffic"
   vpc_id      = "vpc-03b53edf3579ce9c1"
-}
-ingress {
-  from_port = 22
-  to_port   = 22
-  protocol  = "tcp"
-}
 
-ingress {
-  from_port = 443
-  to_port   = 443
-  protocol  = "tcp"
-}
-ingress {
-  from_port = 8080
-  to_port   = 8080
-  protocol  = "tcp"
-}
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-egress {
-  from_port = 0
-  to_port   = 0
-  protocol  = "-1"
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "aws_s3_bucket" "jenkinsartifacts23" {
@@ -74,6 +79,6 @@ resource "aws_s3_bucket" "jenkinsartifacts23" {
 }
 
 resource "aws_s3_bucket_acl" "privateJenkins_Artifactsbucket" {
-  bucket = jenkinsartifacts23
+  bucket = "jenkinsartifacts23"
   acl    = "private"
 }
