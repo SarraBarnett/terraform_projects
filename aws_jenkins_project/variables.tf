@@ -50,3 +50,8 @@ variable "s3_bucket_acl" {
   type    = string
   default = "private"
 }
+
+variable "security_group_name" {
+  type    = string
+  default = "ec2_jenkins"
+}
