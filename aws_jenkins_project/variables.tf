@@ -45,3 +45,8 @@ variable "key_name" {
   type        = string
   default     = "projectkeypair"
 }
+
+variable "s3_bucket_acl" {
+  type    = string
+  default = "private"
+}
