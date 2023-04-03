@@ -3,14 +3,11 @@ resource "aws_instance" "jenkins_server" {
   ami                    = "var.ami_id"
   instance_type          = "var.instance_type"
   vpc_security_group_ids = [aws_security_group.ec2_jenkins.id]
-
-
+  user_data              = file("script.sh")
+  key_name               = var.key_name
   tags = {
     Name = "var.instance_name"
   }
-
-  # User data in ec2 with script to install and run jenkins server
-  user_data = file("script.sh")
 
 }
 
