@@ -54,3 +54,29 @@ resource "aws_s3_bucket_acl" "privateJenkins_Artifactsbucket" {
   bucket = var.bucket_name
   acl    = var.s3_bucket_acl
 }
+
+# Create an AWS IAM Role and an assume role policy to allow
+# the EC2 instance to assume this role
+
+resource "aws_iam_role" "s3_jenkins_role" {
+  name = "s3_jenkins_role"
+
+  # "jsonencode" function converts HCL to JSON format
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "s3_jenkins_role_policy" {
+  policy_arn = "arn:aws:iam::061354871783:policy/s3_read_write_access"
+  role       = aws_iam_role.s3_jenkins_role.name
+}
