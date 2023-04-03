@@ -1,17 +1,17 @@
 # Create a resource block for ec2 instance
 resource "aws_instance" "jenkins_server" {
-  ami                    = "var.ami_id"
-  instance_type          = "var.instance_type"
-  vpc_security_group_ids = [aws_security_group.ec2_jenkins.id]
+  ami                    = var.ami_id
+  instance_type          = var.instance_type
+  vpc_security_group_ids = var.security_group_name
   user_data              = file("script.sh")
   key_name               = var.key_name
   tags = {
-    Name = "var.instance_name"
+    Name = var.instance_name
   }
 }
 
 resource "aws_security_group" "ec2_jenkins" {
-  name        = "ec2_jenkins"
+  name        = var.security_group_name
   description = "Allow SSH and HTTP traffic"
   vpc_id      = var.vpc_id
 
