@@ -35,7 +35,13 @@ variable "region" {
 }
 
 variable "cidr_blocks" {
-  description = "CIDR black for ingress/egress rules"
-  type        = string
+  description = "A list of CIDR blocks to allow traffic from"
+  type        = string(list)
   default     = ["0.0.0.0/0"]
+}
+
+variable "key_name" {
+  description = "Name of aws Key Pair"
+  type        = string
+  default     = "projectkeypair"
 }
