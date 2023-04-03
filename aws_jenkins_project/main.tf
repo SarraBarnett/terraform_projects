@@ -1,4 +1,3 @@
-# Create a resource block for ec2 instance
 resource "aws_instance" "jenkins_server" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
