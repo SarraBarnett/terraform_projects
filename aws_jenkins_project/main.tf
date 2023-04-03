@@ -4,6 +4,7 @@ resource "aws_instance" "jenkins_server" {
   vpc_security_group_ids = var.security_group_name
   user_data              = file("script.sh")
   key_name               = var.key_name
+  iam_instance_profile   = aws_iam_instance_profile.s3_jenkins_instance_profile.name
   tags = {
     Name = var.instance_name
   }
@@ -80,3 +81,10 @@ resource "aws_iam_role_policy_attachment" "s3_jenkins_role_policy" {
   policy_arn = "arn:aws:iam::061354871783:policy/s3_read_write_access"
   role       = aws_iam_role.s3_jenkins_role.name
 }
+
+resource "aws_iam_instance_profile" "s3_jenkins_instance_profile" {
+  name = "s3_jenkins_instance_profile"
+  role = aws_iam_role.s3_jenkins_role.name
+}
+
+# Make sure to add the iam_instance_profile attribute in the ec2 resource block
