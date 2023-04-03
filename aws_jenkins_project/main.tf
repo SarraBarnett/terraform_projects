@@ -53,5 +53,5 @@ resource "aws_s3_bucket" "jenkinsartifacts23" {
 
 resource "aws_s3_bucket_acl" "privateJenkins_Artifactsbucket" {
   bucket = var.bucket_name
-  acl    = "private"
+  acl    = var.s3_bucket_acl
 }
