@@ -8,7 +8,6 @@ resource "aws_instance" "jenkins_server" {
   tags = {
     Name = "var.instance_name"
   }
-
 }
 
 resource "aws_security_group" "ec2_jenkins" {
@@ -46,7 +45,6 @@ resource "aws_security_group" "ec2_jenkins" {
 
 resource "aws_s3_bucket" "jenkinsartifacts23" {
   bucket = var.bucket_name
-
   tags = {
     Name        = "Jenkins Artifacts Bucket"
     Environment = "Dev"
