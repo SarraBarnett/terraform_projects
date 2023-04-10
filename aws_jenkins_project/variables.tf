@@ -36,7 +36,7 @@ variable "region" {
 
 variable "cidr_blocks" {
   description = "A list of CIDR blocks to allow traffic from"
-  type        = string(list)
+  type        = list
   default     = ["0.0.0.0/0"]
 }
 
