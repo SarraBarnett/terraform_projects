@@ -1,4 +1,4 @@
-# Define the security group
+# Configuring the security group
 resource "aws_security_group" "apache_sg" {
   name_prefix = "apache_sg"
   vpc_id      = var.vpc_id
@@ -11,7 +11,7 @@ resource "aws_security_group" "apache_sg" {
   }
 }
 
-# Specifying the IDs of the two subnets in my default vpc
+# Selecting two subnets from my default vpc
 data "aws_subnets" "selected_subnets" {
   filter {
     name   = "vpc-id"
@@ -23,7 +23,7 @@ data "aws_subnets" "selected_subnets" {
   }
 }
 
-# Define the launch template
+# Configuring the launch template
 resource "aws_launch_template" "apache" {
   name_prefix   = "apache"
   image_id      = var.ami_id
@@ -31,7 +31,7 @@ resource "aws_launch_template" "apache" {
   user_data     = base64encode(file("apache.sh"))
 }
 
-# Define the auto scaling group
+# Configuring the auto scaling group
 resource "aws_autoscaling_group" "apache-asg" {
   name_prefix         = "apache-asg"
   vpc_zone_identifier = data.aws_subnets.selected_subnets.ids
