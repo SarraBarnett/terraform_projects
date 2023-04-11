@@ -1,23 +1,7 @@
-# Define the VPC
-resource "aws_vpc" "default" {
-  cidr_block = var.vpc_cidr_block
-}
-
-# Define the 2 subnets
-resource "aws_subnet" "default_subnet_1" {
-  vpc_id     = aws_vpc.default.id
-  cidr_block = var.subnet_cidr_block_1
-}
-
-resource "aws_subnet" "default_subnet_2" {
-  vpc_id     = aws_vpc.default.id
-  cidr_block = var.subnet_cidr_block_2
-}
-
 # Define the security group
 resource "aws_security_group" "apache_sg" {
   name_prefix = "apache_sg"
-  vpc_id      = aws_vpc.default.id
+  vpc_id      = var.vpc_id
 
   ingress {
     from_port   = 80
@@ -27,22 +11,33 @@ resource "aws_security_group" "apache_sg" {
   }
 }
 
+# Specifying the IDs of the two subnets in my default vpc
+data "aws_subnets" "selected_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [var.vpc_id]
+  }
+  filter {
+    name   = "subnet-id"
+    values = [var.subnet_id_1, var.subnet_id_2]
+  }
+}
 
 # Define the launch template
 resource "aws_launch_template" "apache" {
   name_prefix   = "apache"
   image_id      = var.ami_id
   instance_type = var.instance_type
-  user_data     = "${base64encode(file("apache.sh"))}"
+  user_data     = base64encode(file("apache.sh"))
 }
 
 # Define the auto scaling group
 resource "aws_autoscaling_group" "apache-asg" {
-  name_prefix        = "apache-asg"
-  availability_zones = var.availability_zones
-  desired_capacity   = var.desired_capacity
-  min_size           = var.min_size
-  max_size           = var.max_size
+  name_prefix         = "apache-asg"
+  vpc_zone_identifier = data.aws_subnets.selected_subnets.ids
+  desired_capacity    = var.desired_capacity
+  min_size            = var.min_size
+  max_size            = var.max_size
 
   launch_template {
     id      = aws_launch_template.apache.id
