@@ -29,6 +29,13 @@ resource "aws_security_group" "ec2_jenkins" {
     cidr_blocks = var.cidr_blocks
   }
 
+ ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = var.cidr_blocks
+  }
+  
   egress {
     from_port   = 0
     to_port     = 0
@@ -55,7 +62,6 @@ resource "aws_s3_bucket_acl" "privateJenkins_Artifactsbucket" {
 
 resource "aws_iam_role" "s3_jenkins_role" {
   name = "s3_jenkins_role"
-
   # "jsonencode" function converts HCL to JSON format
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -74,6 +80,8 @@ resource "aws_iam_role" "s3_jenkins_role" {
 resource "aws_iam_role_policy_attachment" "s3_jenkins_role_policy" {
   policy_arn = "arn:aws:iam::061354871783:policy/s3_read_write_access"
   role       = aws_iam_role.s3_jenkins_role.name
+  
+  
 }
 
 resource "aws_iam_instance_profile" "s3_jenkins_instance_profile" {
