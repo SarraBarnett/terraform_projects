@@ -1,7 +1,7 @@
 resource "aws_instance" "jenkins_server" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
-  vpc_security_group_ids = var.security_group_name
+  vpc_security_group_ids = [aws_security_group.ec2_jenkins.id]
   user_data              = file("script.sh")
   key_name               = var.key_name
   iam_instance_profile   = aws_iam_instance_profile.s3_jenkins_instance_profile.name
@@ -22,12 +22,6 @@ resource "aws_security_group" "ec2_jenkins" {
     cidr_blocks = var.cidr_blocks
   }
 
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = var.cidr_blocks
-  }
   ingress {
     from_port   = 8080
     to_port     = 8080
